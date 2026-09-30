@@ -1,0 +1,6 @@
+{
+  "name": "Weather Forecast with Gemini AI & Flask",
+  "description": "A beginner-friendly full-stack weather forecast application with Flask backend, SQLite database, real-time forecast, and Gemini AI weather explanation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

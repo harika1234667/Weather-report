@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard - SkyCast</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-icon">⛅</span>
+                <div>
+                    <h1 class="brand-title">SkyCast Weather</h1>
+                    <p class="brand-subtitle">
+                        Welcome back, <strong class="user-greeting-name">{{ user.full_name }}</strong> 👋
+                    </p>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <!-- Temperature Unit Switcher (°C / °F) -->
+                <div class="unit-toggle" role="group" aria-label="Temperature unit selection">
+                    <button id="btn-celsius" class="unit-btn active" title="Show temperature in Celsius">°C</button>
+                    <button id="btn-fahrenheit" class="unit-btn" title="Show temperature in Fahrenheit">°F</button>
+                </div>
+
+                <!-- User profile badge -->
+                <div class="user-pill" title="Logged in as {{ user.email }}">
+                    <span class="pill-avatar">👤</span>
+                    <span class="pill-name">{{ user.full_name.split(' ')[0] }}</span>
+                </div>
+
+                <!-- Logout Button -->
+                <a href="/logout" class="btn-logout" title="Sign out of your session">
+                    <span>Logout 🚪</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Current Location Action Banner -->
+        <section class="location-banner">
+            <div class="location-banner-text">
+                <h3>Get Weather for Your Current Location</h3>
+                <p>Click the button below to detect your latitude & longitude via browser Geolocation.</p>
+                <div id="location-status-badge" class="location-status-badge hidden"></div>
+            </div>
+            <button id="btn-current-location" class="btn-location-action" type="button">
+                <span>📍 Use My Current Location</span>
+            </button>
+        </section>
+
+        <!-- City Search Section -->
+        <section class="search-section">
+            <form id="search-form" class="search-form" onsubmit="return false;">
+                <div class="search-input-group">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        id="city-input" 
+                        placeholder="Search for any city (e.g. London, Paris, Tokyo, New York)..." 
+                        autocomplete="off"
+                    />
+                    <button type="submit" id="search-btn" class="btn-primary">
+                        <span>Search</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Quick City Shortcut Chips -->
+            <div class="quick-cities">
+                <span class="quick-title">Popular Cities:</span>
+                <button class="quick-chip" data-city="London">London</button>
+                <button class="quick-chip" data-city="New York">New York</button>
+                <button class="quick-chip" data-city="Tokyo">Tokyo</button>
+                <button class="quick-chip" data-city="Paris">Paris</button>
+                <button class="quick-chip" data-city="Sydney">Sydney</button>
+                <button class="quick-chip" data-city="San Francisco">San Francisco</button>
+            </div>
+        </section>
+
+        <!-- Loading State Indicator -->
+        <div id="loading-spinner" class="loading-state hidden">
+            <div class="spinner"></div>
+            <p id="loading-text">Fetching live weather data... Please wait</p>
+        </div>
+
+        <!-- Error Notification Banner -->
+        <div id="error-banner" class="alert-banner alert-error hidden">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-content">
+                <p id="error-message">City not found or location permission denied.</p>
+            </div>
+        </div>
+
+        <!-- Weather Results Container -->
+        <main id="weather-results" class="weather-results hidden">
+            
+            <!-- Current Weather Card -->
+            <section class="current-weather-card">
+                <div class="weather-top-bar">
+                    <div>
+                        <div class="location-title-row">
+                            <span id="location-badge" class="location-pin-badge hidden">📍 Current Location</span>
+                            <h2 id="current-city" class="city-name">Detected City</h2>
+                        </div>
+                        <p id="current-date" class="date-time">Today</p>
+                    </div>
+
+                    <div class="top-bar-right">
+                        <span id="weather-condition-tag" class="condition-badge">Cloudy</span>
+                    </div>
+                </div>
+
+                <div class="weather-hero">
+                    <img id="current-icon" class="weather-big-icon" src="https://openweathermap.org/img/wn/02d@2x.png" alt="Weather Condition">
+                    <div class="temperature-block">
+                        <span id="current-temp" class="big-temp">24</span>
+                        <span class="temp-unit">°C</span>
+                    </div>
+                </div>
+
+                <p id="current-desc" class="weather-desc">Scattered clouds across the area</p>
+
+                <!-- Weather Metrics Grid (Feels Like, Humidity, Wind, Pressure, Visibility, Sunrise/Sunset) -->
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <span class="metric-icon">🌡️</span>
+                        <div>
+                            <span class="metric-label">Feels Like</span>
+                            <span id="metric-feels" class="metric-value">25°C</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <span class="metric-icon">💧</span>
+                        <div>
+                            <span class="metric-label">Humidity</span>
+                            <span id="metric-humidity" class="metric-value">60%</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <span class="metric-icon">💨</span>
+                        <div>
+                            <span class="metric-label">Wind Speed</span>
+                            <span id="metric-wind" class="metric-value">14 km/h</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <span class="metric-icon">🧭</span>
+                        <div>
+                            <span class="metric-label">Pressure</span>
+                            <span id="metric-pressure" class="metric-value">1013 hPa</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <span class="metric-icon">👁️</span>
+                        <div>
+                            <span class="metric-label">Visibility</span>
+                            <span id="metric-visibility" class="metric-value">10 km</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <span class="metric-icon">🌅</span>
+                        <div>
+                            <span class="metric-label">Sunrise / Sunset</span>
+                            <span id="metric-sun" class="metric-value">06:30 AM / 07:45 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Google Gemini AI Weather Explanation Feature -->
+                <div class="ai-box">
+                    <div class="ai-header">
+                        <span class="ai-badge">✨ Google Gemini AI Weather Explanation</span>
+                    </div>
+                    <p id="ai-explanation-text" class="ai-text">
+                        "Your current location is pleasantly warm today. The temperature is 24°C with mild wind, making it a great day for outdoor activities."
+                    </p>
+                </div>
+            </section>
+
+            <!-- 5-Day Weather Forecast Section -->
+            <section class="forecast-section">
+                <h3 class="section-title">5-Day Weather Forecast</h3>
+                <div id="forecast-grid" class="forecast-grid">
+                    <!-- 5 forecast cards injected dynamically by script.js -->
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Search History Section (Stored in SQL database) -->
+        <section class="history-section">
+            <div class="history-header">
+                <div class="history-title-group">
+                    <span class="history-icon">🕒</span>
+                    <h3 class="section-title">Recent Searches (Saved in SQLite Database)</h3>
+                </div>
+                <button id="clear-history-btn" class="btn-clear" title="Clear your search history from the database">
+                    <span>🗑️ Clear History</span>
+                </button>
+            </div>
+
+            <div id="history-list" class="history-list">
+                <p class="history-empty">No recent searches yet. Search a city or click "Use My Current Location" above!</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>SkyCast Weather • Python with Flask Sessions • SQLite • Geolocation API • Google Gemini AI</p>
+        </footer>
+    </div>
+
+    <!-- Frontend JavaScript -->
+    <script src="/static/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SkyCast Weather</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="auth-page">
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <!-- Brand -->
+            <div class="auth-brand">
+                <div class="brand-icon-large">⛅</div>
+                <h1 class="auth-title">Welcome to SkyCast</h1>
+                <p class="auth-subtitle">Login to access your personalized live weather dashboard</p>
+            </div>
+
+            <!-- Error message if any -->
+            {% if error %}
+            <div class="alert-banner alert-error mb-4">
+                <span class="alert-icon">⚠️</span>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <!-- Success message if redirected from registration -->
+            {% if success %}
+            <div class="alert-banner alert-success mb-4">
+                <span class="alert-icon">✅</span>
+                <span>{{ success }}</span>
+            </div>
+            {% endif %}
+
+            <!-- Login Form -->
+            <form action="/login" method="POST" class="auth-form" id="login-form">
+                <div class="form-group">
+                    <label for="email">Email or Username</label>
+                    <div class="input-with-icon">
+                        <span class="input-icon">✉️</span>
+                        <input 
+                            type="text" 
+                            id="email" 
+                            name="email" 
+                            placeholder="e.g. alex@example.com" 
+                            required 
+                            autocomplete="username"
+                        />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="password">Password</label>
+                        <a href="javascript:void(0)" onclick="openForgotModal()" class="forgot-link">Forgot Password?</a>
+                    </div>
+                    <div class="input-with-icon">
+                        <span class="input-icon">🔒</span>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Enter your password" 
+                            required 
+                            autocomplete="current-password"
+                        />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth-primary">
+                    <span>Login to Dashboard</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+
+                <!-- Demo Account Quick Fill Button -->
+                <button type="button" class="btn-auth-secondary" onclick="fillDemoAccount()">
+                    <span>⚡ Quick Test Login (Demo Account)</span>
+                </button>
+            </form>
+
+            <!-- Bottom redirect link -->
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="/register" class="auth-link">Create Account</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Forgot Password</h3>
+                <button type="button" class="modal-close" onclick="closeForgotModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-instruction">Enter your registered email address to receive password reset instructions.</p>
+                <div class="form-group">
+                    <label for="reset-email">Email Address</label>
+                    <div class="input-with-icon">
+                        <span class="input-icon">✉️</span>
+                        <input type="email" id="reset-email" placeholder="name@example.com" />
+                    </div>
+                </div>
+                <div id="reset-status" class="alert-banner alert-success hidden">
+                    <span>A password reset link has been dispatched to your email.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-primary" onclick="simulateReset()">Send Reset Link</button>
+                <button type="button" class="btn-secondary" onclick="closeForgotModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fillDemoAccount() {
+            document.getElementById('email').value = 'alex@example.com';
+            document.getElementById('password').value = 'password123';
+        }
+
+        function openForgotModal() {
+            document.getElementById('forgot-modal').classList.remove('hidden');
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgot-modal').classList.add('hidden');
+        }
+
+        function simulateReset() {
+            const email = document.getElementById('reset-email').value;
+            if (!email) {
+                alert('Please enter your email address.');
+                return;
+            }
+            document.getElementById('reset-status').classList.remove('hidden');
+            setTimeout(() => {
+                closeForgotModal();
+            }, 2500);
+        }
+    </script>
+</body>
+</html>

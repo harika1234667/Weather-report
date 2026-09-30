@@ -1,0 +1,20 @@
+# Environment variables and secrets (Never commit your API keys!)
+.env
+.env.local
+
+# SQLite Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Python cache & virtual environment
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+
+# Operating System files
+.DS_Store
+Thumbs.db

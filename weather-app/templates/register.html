@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - SkyCast Weather</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="auth-page">
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <!-- Brand -->
+            <div class="auth-brand">
+                <div class="brand-icon-large">⛅</div>
+                <h1 class="auth-title">Create an Account</h1>
+                <p class="auth-subtitle">Register to unlock your personalized real-time weather dashboard</p>
+            </div>
+
+            <!-- Error message if any -->
+            {% if error %}
+            <div class="alert-banner alert-error mb-4">
+                <span class="alert-icon">⚠️</span>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <!-- Registration Form -->
+            <form action="/register" method="POST" class="auth-form" id="register-form" onsubmit="return validateRegisterForm()">
+                <div class="form-group">
+                    <label for="full_name">Full Name</label>
+                    <div class="input-with-icon">
+                        <span class="input-icon">👤</span>
+                        <input 
+                            type="text" 
+                            id="full_name" 
+                            name="full_name" 
+                            placeholder="John Doe" 
+                            required 
+                            autocomplete="name"
+                        />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-with-icon">
+                        <span class="input-icon">✉️</span>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="name@example.com" 
+                            required 
+                            autocomplete="email"
+                        />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <span class="input-icon">🔒</span>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Create a password (min 6 characters)" 
+                            required 
+                            autocomplete="new-password"
+                            minlength="6"
+                        />
+                    </div>
+                    <span class="input-hint">Must be at least 6 characters long</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <div class="input-with-icon">
+                        <span class="input-icon">🛡️</span>
+                        <input 
+                            type="password" 
+                            id="confirm_password" 
+                            name="confirm_password" 
+                            placeholder="Re-enter your password" 
+                            required 
+                            autocomplete="new-password"
+                            minlength="6"
+                        />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth-primary">
+                    <span>Register Account</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+            </form>
+
+            <!-- Bottom redirect link -->
+            <div class="auth-footer">
+                <p>Already have an account? <a href="/login" class="auth-link">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateRegisterForm() {
+            const pw = document.getElementById('password').value;
+            const cpw = document.getElementById('confirm_password').value;
+            if (pw !== cpw) {
+                alert("Passwords do not match. Please re-enter.");
+                return false;
+            }
+            if (pw.length < 6) {
+                alert("Password must be at least 6 characters long.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>
